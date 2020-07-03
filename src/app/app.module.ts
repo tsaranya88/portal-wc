@@ -1,5 +1,3 @@
-import './polyfills';
-
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { PortalModule } from '@angular/cdk/portal';
 import { HttpClientModule } from '@angular/common/http';
@@ -8,10 +6,12 @@ import { BrowserModule } from '@angular/platform-browser';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
- 
+
 import { AppComponent } from './app.component';
-import { DemoComponent } from './demo.component';
-import { PortalService } from './portal.service';
+import { CustomerComponent } from './summary/customer/customer.component';
+import { PopoutService } from './services/popout.service';
+import {EmployerComponent} from './summary/employer/employer.component';
+import {AppRoutingModule} from './app-routing.model';
 
 @NgModule({
   imports: [
@@ -19,14 +19,16 @@ import { PortalService } from './portal.service';
     BrowserAnimationsModule,
     FormsModule,
     HttpClientModule,
-    PortalModule
+    PortalModule,
+    AppRoutingModule
   ],
-  entryComponents: [DemoComponent],
-  declarations: [AppComponent, DemoComponent],
-  bootstrap: [AppComponent],
+  exports: [CustomerComponent, EmployerComponent],
+  entryComponents: [CustomerComponent, EmployerComponent],
+  declarations: [AppComponent, CustomerComponent, EmployerComponent],
   providers: [
-    PortalService
+    PopoutService
   ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  bootstrap: [AppComponent]
 })
 export class AppModule {}

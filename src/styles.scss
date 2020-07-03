@@ -2,19 +2,18 @@
 
 body {
   font-family: Roboto, Arial, sans-serif;
-  margin: 0;
+  margin: 25px;
 }
 
-.basic-container {
-  padding: 30px;
+h4 {
+  text-align: center;
+  padding: 0 10px;
 }
 
-.version-info {
-  font-size: 8pt;
-  float: right;
-  margin: 8px;
+hr{
+  margin: 0 0 40px 0;
+  color: #f3f3f3;
 }
-
 
 /**  Copyright 2019 Google LLC. All Rights Reserved.
     Use of this source code is governed by an MIT-style license that

@@ -1,14 +1,13 @@
-import { Component } from '@angular/core';
-import './custom-element';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import './summary/customer/customer.component';
+import {PopoutService} from './services/popout.service';
+import {POPOUT_MODAL_DATA, POPOUT_MODALS, PopoutData, PopoutModalName} from './services/popout.tokens';
 
 @Component({
-  selector: 'app-component',
+  selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
+  styleUrls: ['./app.component.scss'],
 })
-export class AppComponent {}
-
-
-/**  Copyright 2019 Google LLC. All Rights Reserved.
-    Use of this source code is governed by an MIT-style license that
-    can be found in the LICENSE file at http://angular.io/license */
+export class AppComponent {
+  constructor() { }
+}
