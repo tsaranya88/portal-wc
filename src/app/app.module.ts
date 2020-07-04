@@ -8,10 +8,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 
 import { AppComponent } from './app.component';
-import { CustomerComponent } from './summary/customer/customer.component';
+import { CustomerComponent } from './customer/customer.component';
 import { PopoutService } from './services/popout.service';
-import {EmployerComponent} from './summary/employer/employer.component';
-import {AppRoutingModule} from './app-routing.model';
+import { EmployerComponent } from './employer/employer.component';
 
 @NgModule({
   imports: [
@@ -19,8 +18,7 @@ import {AppRoutingModule} from './app-routing.model';
     BrowserAnimationsModule,
     FormsModule,
     HttpClientModule,
-    PortalModule,
-    AppRoutingModule
+    PortalModule
   ],
   exports: [CustomerComponent, EmployerComponent],
   entryComponents: [CustomerComponent, EmployerComponent],

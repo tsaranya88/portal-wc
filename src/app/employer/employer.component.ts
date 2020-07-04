@@ -1,7 +1,7 @@
 import { Component, Inject, Input, OnInit, Output } from '@angular/core';
 
-import '../../custom/test-element';
-import {POPOUT_MODAL_DATA, PopoutData} from '../../services/popout.tokens';
+import '../custom/test-element';
+import {POPOUT_MODAL_DATA, PopoutData} from '../services/popout.tokens';
 
 @Component({
   selector: 'app-employer',
