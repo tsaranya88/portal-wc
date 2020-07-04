@@ -6,6 +6,8 @@ import {EmployerComponent} from '../employer/employer.component';
 
 @Injectable()
 export class PopoutService implements OnDestroy {
+  styleSheetElement;
+
   constructor(
     private injector: Injector,
     private componentFactoryResolver: ComponentFactoryResolver,
@@ -41,27 +43,36 @@ export class PopoutService implements OnDestroy {
   createCDKPortal(data, windowInstance) {
     if (windowInstance) {
       windowInstance.document.body.innerText = '';
-      // create a PortalHost with the body of the new window document
-      const host = new DomPortalOutlet(windowInstance.document.body, this.componentFactoryResolver, this.applicationRef, this.injector);
+      // create a PortalOutlet with the body of the new window document
+      const outlet = new DomPortalOutlet(windowInstance.document.body, this.componentFactoryResolver, this.applicationRef, this.injector);
       // Copy styles from parent window
-      document.querySelectorAll('link, style').forEach(htmlElement => {
+      document.querySelectorAll('style').forEach(htmlElement => {
         windowInstance.document.head.appendChild(htmlElement.cloneNode(true));
       });
-      // Create an injector with modal data
-      const injector = this.createInjector(data);
+      this.styleSheetElement = this.getStyleSheetElement();
 
-      // Attach the portal
-      let componentInstance;
-      if (data.modalName === PopoutModalName.customerDetail) {
-        windowInstance.document.title = 'Customer Modal';
-        componentInstance = this.attachCustomerContainer(host, injector);
-      }
-      if (data.modalName === PopoutModalName.employerDetail) {
-        windowInstance.document.title = 'Employer Modal';
-        componentInstance = this.attachEmployerContainer(host, injector);
-      }
+      windowInstance.document.head.appendChild(this.styleSheetElement);
 
-      POPOUT_MODALS[data.modalName] = { windowInstance, host, componentInstance };
+      this.styleSheetElement.onload = () => {
+        // Clear popout modal content
+        windowInstance.document.body.innerText = '';
+
+        // Create an injector with modal data
+        const injector = this.createInjector(data);
+
+        // Attach the portal
+        let componentInstance;
+        if (data.modalName === PopoutModalName.customerDetail) {
+          windowInstance.document.title = 'Customer Modal';
+          componentInstance = this.attachCustomerContainer(outlet, injector);
+        }
+        if (data.modalName === PopoutModalName.employerDetail) {
+          windowInstance.document.title = 'Employer Modal';
+          componentInstance = this.attachEmployerContainer(outlet, injector);
+        }
+
+        POPOUT_MODALS[data.modalName] = { windowInstance, outlet, componentInstance };
+      };
     }
   }
 
@@ -82,15 +93,15 @@ export class PopoutService implements OnDestroy {
     });
   }
 
-  attachCustomerContainer(host, injector) {
+  attachCustomerContainer(outlet, injector) {
     const containerPortal = new ComponentPortal(CustomerComponent, null, injector);
-    const containerRef: ComponentRef<CustomerComponent> = host.attach(containerPortal);
+    const containerRef: ComponentRef<CustomerComponent> = outlet.attach(containerPortal);
     return containerRef.instance;
   }
 
-  attachEmployerContainer(host, injector) {
+  attachEmployerContainer(outlet, injector) {
     const containerPortal = new ComponentPortal(EmployerComponent, null, injector);
-    const containerRef: ComponentRef<EmployerComponent> = host.attach(containerPortal);
+    const containerRef: ComponentRef<EmployerComponent> = outlet.attach(containerPortal);
     return containerRef.instance;
   }
 
@@ -98,5 +109,18 @@ export class PopoutService implements OnDestroy {
     const injectionTokens = new WeakMap();
     injectionTokens.set(POPOUT_MODAL_DATA, data);
     return new PortalInjector(this.injector, injectionTokens);
+  }
+
+  getStyleSheetElement() {
+    const styleSheetElement = document.createElement('link');
+    document.querySelectorAll('link').forEach(htmlElement => {
+      if (htmlElement.rel === 'stylesheet' && htmlElement.href.includes('styles')) {
+        const absoluteUrl = new URL(htmlElement.href).href;
+        styleSheetElement.rel = 'stylesheet';
+        styleSheetElement.href = absoluteUrl;
+      }
+    });
+    console.log(styleSheetElement.sheet);
+    return styleSheetElement;
   }
 }
