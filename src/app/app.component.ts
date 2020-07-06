@@ -1,6 +1,8 @@
 import {Component, HostListener, Inject, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {POPOUT_MODAL_DATA, POPOUT_MODALS, PopoutData, PopoutModalName} from './services/popout.tokens';
 import {PopoutService} from './services/popout.service';
+import { ComponentPortal } from '@angular/cdk/portal';
+import { CustomerComponent } from './customer/customer.component';
 
 @Component({
   selector: 'app-root',
@@ -8,8 +10,13 @@ import {PopoutService} from './services/popout.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+  customerComponentPortal: ComponentPortal<CustomerComponent>;
+
   customerDetails: any = {};
   companyDetails: any = {};
+
+  isPopoverJessOpen: boolean = false;
+  isPopoverMarkOpen: boolean = false;
 
   constructor(private popoutService: PopoutService) {
     this.customerDetails = {
@@ -55,23 +62,30 @@ export class AppComponent {
       employer: this.customerDetails[name].employer
     };
 
-    const customerPopoutDetails = POPOUT_MODALS[PopoutModalName.customerDetail];
-
-    if (!this.popoutService.isPopoutWindowOpen(PopoutModalName.customerDetail)) {
-      this.popoutService.openPopoutModal(modalData);
+    if (name === 'Jessica') {
+      this.isPopoverJessOpen = true;
     } else {
-      const sameCustomer = customerPopoutDetails['componentInstance'].name === name;
-      // When popout modal is open and there is no change in data, focus on popout modal
-      if (sameCustomer) {
-        this.popoutService.focusPopoutWindow(PopoutModalName.customerDetail);
-      } else {
-        customerPopoutDetails['outlet'].detach();
-        const injector = this.popoutService.createInjector(modalData);
-        const componentInstance = this.popoutService.attachCustomerContainer(customerPopoutDetails['outlet'], injector);
-        customerPopoutDetails['componentInstance'] = componentInstance;
-        this.popoutService.focusPopoutWindow(PopoutModalName.customerDetail);
-      }
+      this.isPopoverMarkOpen = true;
     }
+    const customerPopoutDetails = POPOUT_MODALS[PopoutModalName.customerDetail];
+    const injector = this.popoutService.createInjector(modalData);
+    this.customerComponentPortal = new ComponentPortal(CustomerComponent, null, injector);
+    return this.customerComponentPortal;
+    // if (!this.popoutService.isPopoutWindowOpen(PopoutModalName.customerDetail)) {
+    //   this.popoutService.openPopoutModal(modalData);
+    // } else {
+    //   const sameCustomer = customerPopoutDetails['componentInstance'].name === name;
+    //   // When popout modal is open and there is no change in data, focus on popout modal
+    //   if (sameCustomer) {
+    //     this.popoutService.focusPopoutWindow(PopoutModalName.customerDetail);
+    //   } else {
+    //     customerPopoutDetails['outlet'].detach();
+       
+    //     const componentInstance = this.popoutService.attachCustomerContainer(customerPopoutDetails['outlet'], injector);
+    //     customerPopoutDetails['componentInstance'] = componentInstance;
+    //     this.popoutService.focusPopoutWindow(PopoutModalName.customerDetail);
+    //   }
+    // }
   }
 
   openEmployerPopout(name: string) {
@@ -100,6 +114,14 @@ export class AppComponent {
         employerPopoutDetails['componentInstance'] = componentInstance;
         this.popoutService.focusPopoutWindow(PopoutModalName.employerDetail);
       }
+    }
+  }
+
+   closePopover(name: string) {
+    if (name === 'Jessica') {
+      this.isPopoverJessOpen = false;
+    } else {
+      this.isPopoverMarkOpen = false;
     }
   }
 }

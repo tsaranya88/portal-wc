@@ -5,6 +5,7 @@ import {POPOUT_MODAL_DATA, PopoutData} from '../services/popout.tokens';
 
 @Component({
   selector: 'app-customer',
+  styleUrls: ['./customer.component.scss'],
   templateUrl: './customer.component.html',
 })
 export class CustomerComponent {
